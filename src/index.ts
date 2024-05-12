@@ -1,7 +1,7 @@
 import { homedir } from 'node:os'
 import { join, sep } from 'node:path'
 import { Commands } from './enums/commands.enum.ts'
-import { opendir, readdir, writeFile } from 'node:fs/promises'
+import { opendir, readdir, rename, writeFile } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 
 async function fileManager() {
@@ -59,6 +59,10 @@ async function fileManager() {
       }
       case Commands.ADD: {
         await cmdAdd(cmd[1])
+        break
+      }
+      case Commands.RN: {
+        await cmdRn(cmd[1], cmd[2])
         break
       }
       default:
@@ -122,6 +126,14 @@ async function fileManager() {
       return writeFile(join(...currPath, file), '', { encoding: 'utf8' })
     } catch (error) {
       showError(`File ${file} can't be created`)
+    }
+  }
+
+  async function cmdRn(oldName: string, newName: string) {
+    try {
+      return rename(join(...currPath, oldName), join(...currPath, newName))
+    } catch (error) {
+      showError(`File ${oldName} can't be renamed`)
     }
   }
 
