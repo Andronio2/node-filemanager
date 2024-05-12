@@ -1,7 +1,7 @@
 import { homedir } from 'node:os'
 import { join, sep } from 'node:path'
 import { Commands } from './enums/commands.enum.ts'
-import { opendir } from 'node:fs/promises'
+import { opendir, readdir } from 'node:fs/promises'
 
 async function fileManager() {
   let currPath: string[] = []
@@ -49,6 +49,10 @@ async function fileManager() {
         await cmdCd(cmd[1])
         break
       }
+      case Commands.LS: {
+        await cmdLs()
+        break
+      }
       default:
     }
   }
@@ -67,6 +71,27 @@ async function fileManager() {
       } catch (err) {
         showError(`No such file or directory: ${path}`)
       }
+    }
+  }
+
+  async function cmdLs() {
+    try {
+      const files = await readdir(join(...currPath), { withFileTypes: true })
+      const dirList = files
+        .filter(file => file.isDirectory())
+        .map(file => file.name)
+        .sort((a, b) => a.localeCompare(b))
+        .map(file => ({ Name: file, Type: 'directory' }))
+      const fileList = files
+        .filter(file => !file.isDirectory())
+        .map(file => file.name)
+        .sort((a, b) => a.localeCompare(b))
+        .map(file => ({ Name: file, Type: 'file' }))
+      const list = dirList.concat(fileList)
+
+      console.table(list)
+    } catch {
+      showError("Can't read directory")
     }
   }
 
