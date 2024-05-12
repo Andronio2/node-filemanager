@@ -6,4 +6,5 @@ export enum Commands {
   CAT = 'cat',
   ADD = 'add',
   RN = 'rn',
+  CP = 'cp',
 }

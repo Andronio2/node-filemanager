@@ -2,7 +2,8 @@ import { homedir } from 'node:os'
 import { join, sep } from 'node:path'
 import { Commands } from './enums/commands.enum.ts'
 import { opendir, readdir, rename, writeFile } from 'node:fs/promises'
-import { createReadStream } from 'node:fs'
+import { createReadStream, createWriteStream } from 'node:fs'
+import { pipeline } from 'node:stream/promises'
 
 async function fileManager() {
   let currPath: string[] = []
@@ -63,6 +64,10 @@ async function fileManager() {
       }
       case Commands.RN: {
         await cmdRn(cmd[1], cmd[2])
+        break
+      }
+      case Commands.CP: {
+        await cmdCp(cmd[1], cmd[2])
         break
       }
       default:
@@ -134,6 +139,16 @@ async function fileManager() {
       return rename(join(...currPath, oldName), join(...currPath, newName))
     } catch (error) {
       showError(`File ${oldName} can't be renamed`)
+    }
+  }
+
+  async function cmdCp(oldName: string, newName: string) {
+    try {
+      const readStream = createReadStream(join(...currPath, oldName), { encoding: 'binary' })
+      const writeStream = createWriteStream(join(...currPath, newName), { encoding: 'binary' })
+      return pipeline(readStream, writeStream)
+    } catch (error) {
+      showError(`File ${oldName} can't be copied`)
     }
   }
 
