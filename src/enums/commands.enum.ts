@@ -3,5 +3,6 @@ export enum Commands {
   UP = 'up',
   CD = 'cd',
   LS = 'ls',
-  CAT = 'cat'
+  CAT = 'cat',
+  ADD = 'add',
 }

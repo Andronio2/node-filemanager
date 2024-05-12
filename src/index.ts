@@ -1,7 +1,7 @@
 import { homedir } from 'node:os'
 import { join, sep } from 'node:path'
 import { Commands } from './enums/commands.enum.ts'
-import { opendir, readdir } from 'node:fs/promises'
+import { opendir, readdir, writeFile } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 
 async function fileManager() {
@@ -57,6 +57,10 @@ async function fileManager() {
         await cmdCat(cmd[1])
         break
       }
+      case Commands.ADD: {
+        await cmdAdd(cmd[1])
+        break
+      }
       default:
     }
   }
@@ -108,28 +112,16 @@ async function fileManager() {
           resolve(0)
         })
       })
-      // readStream.on('error', error => {
-      //   console.log('readStream error', error)
-      // })
-      // finished(readStream)
-      //   .then(() => {
-      //     console.log('finished finish')
-      //   })
-      //   .catch(error => {
-      //     console.log('finished error', error)
-      //   })
-      // await pipeline(readStream, process.stdout)
-      //   .then(() => {
-      //     console.log('promise resolved')
-      //   })
-      //   .catch(error => {
-      //     console.log('promise rejected', error)
-      //   })
-      // return await new Promise(resolve => {
-      //   setTimeout(resolve, 1000)
-      // })
     } catch (error) {
       showError(`No such file: ${file}`)
+    }
+  }
+
+  async function cmdAdd(file: string) {
+    try {
+      return writeFile(join(...currPath, file), '', { encoding: 'utf8' })
+    } catch (error) {
+      showError(`File ${file} can't be created`)
     }
   }
 
