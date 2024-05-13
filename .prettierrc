@@ -8,5 +8,5 @@
   "arrowParens": "avoid",
   "proseWrap": "preserve",
   "quoteProps": "as-needed",
-  "printWidth": 100
+  "printWidth": 120
 }

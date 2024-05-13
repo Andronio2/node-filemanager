@@ -7,4 +7,5 @@ export enum Commands {
   ADD = 'add',
   RN = 'rn',
   CP = 'cp',
+  MV = 'mv',
 }
